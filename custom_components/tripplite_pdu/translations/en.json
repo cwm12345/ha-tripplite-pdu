@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tripp Lite PDU",
+        "description": "Enter the PDU's hostname and SNMPv3 credentials (same ones already used in the existing switch/sensor YAML for this device).",
+        "data": {
+          "host": "Host",
+          "username": "SNMPv3 username",
+          "auth_key": "SNMPv3 auth key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the PDU or read its metering OIDs. Check the host and credentials, and that this machine has network access to it."
+    },
+    "abort": {
+      "already_configured": "This PDU is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "total_current": { "name": "Total Current" },
+      "total_power": { "name": "Total Power" }
+    }
+  }
+}
