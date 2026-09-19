@@ -9,6 +9,7 @@ Home Automation/snmp_probe.py.
 """
 from __future__ import annotations
 
+from homeassistant.exceptions import HomeAssistantError
 from pysnmp.hlapi.v3arch.asyncio import (
     ContextData,
     Integer,
@@ -25,6 +26,7 @@ from pysnmp.hlapi.v3arch.asyncio import (
 )
 
 from .const import (
+    OID_OUTLET_COMMAND_BASE,
     OID_OUTLET_NAME_BASE,
     OID_OUTLET_STATE_BASE,
     OID_OUTPUT_CURRENT,
@@ -34,8 +36,17 @@ from .const import (
 )
 
 
-class PduSnmpError(Exception):
-    """Raised when an SNMP operation against the PDU fails."""
+class PduSnmpError(HomeAssistantError):
+    """Raised when an SNMP operation against the PDU fails.
+
+    Must subclass HomeAssistantError, not bare Exception -- HA's script
+    engine's `continue_on_error: true` step option only suppresses
+    HomeAssistantError subclasses (confirmed 2026-09-19 against
+    homeassistant/helpers/script.py's _handle_exception: any other
+    exception type is re-raised regardless of continue_on_error). This was
+    the real reason Away Mode/Return Mode kept aborting on a single failed
+    outlet even after continue_on_error was added to every step.
+    """
 
 
 class PduSnmpClient:
@@ -113,13 +124,17 @@ class PduSnmpClient:
     async def async_set_outlet(self, outlet_num: int, turn_on: bool) -> None:
         target = await self._get_target()
         value = OUTLET_STATE_ON if turn_on else OUTLET_STATE_OFF
-        oid = f"{OID_OUTLET_STATE_BASE}.{outlet_num}"
+        # Real root cause found 2026-09-19 (see const.py's OID_OUTLET_COMMAND_BASE
+        # docstring): writes must target the separate "command" column (6), not
+        # the read-only "status" column (4) that OID_OUTLET_STATE_BASE points at
+        # and that this method originally (wrongly) wrote to.
+        oid = f"{OID_OUTLET_COMMAND_BASE}.{outlet_num}"
         err_ind, err_stat, _, _ = await set_cmd(
             self._engine,
             self._user,
             target,
             ContextData(),
-            ObjectType(ObjectIdentity(oid), Integer(value)),
+            ObjectType(ObjectIdentity(oid), Integer(str(value))),
         )
         if err_ind or err_stat:
             raise PduSnmpError(

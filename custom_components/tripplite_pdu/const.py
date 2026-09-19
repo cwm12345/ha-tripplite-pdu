@@ -25,13 +25,21 @@ MODEL = "PDUMH15NET"
 OID_OUTPUT_CURRENT = "1.3.6.1.4.1.850.1.1.3.2.3.2.1.1.5.1.1"  # hundredths of an amp
 OID_OUTPUT_POWER = "1.3.6.1.4.1.850.1.1.3.2.3.2.1.1.8.1.1"  # watts, no scaling
 
-# Outlet table: name/state columns share a common row suffix (the outlet
-# number, walked as 1..N on MEC -- 16 outlets there, other PDUs may differ,
-# so the coordinator discovers the count live rather than hardcoding it).
+# Outlet table: name/state/command columns share a common row suffix (the
+# outlet number, walked as 1..N on MEC -- 16 outlets there, other PDUs may
+# differ, so the coordinator discovers the count live rather than
+# hardcoding it).
 # State: 1 = off, 2 = on (confirmed via live read-back after toggling,
 # matches the existing switch: platform: snmp payload_on/payload_off values
 # already in use in configuration.yaml).
 OID_OUTLET_NAME_BASE = "1.3.6.1.4.1.850.1.1.3.2.3.3.1.1.2.1"
-OID_OUTLET_STATE_BASE = "1.3.6.1.4.1.850.1.1.3.2.3.3.1.1.4.1"
+OID_OUTLET_STATE_BASE = "1.3.6.1.4.1.850.1.1.3.2.3.3.1.1.4.1"  # read-only status
+# Real root cause of a "notWritable" outlet-control bug found shortly after
+# first release: writes must target a SEPARATE "command" column (6), not
+# the status column (4) reads use. An earlier version of this integration
+# wrote to OID_OUTLET_STATE_BASE for both reads and writes, which is
+# read-only on this hardware -- every write failed, regardless of outlet
+# or PDU, until this was split out.
+OID_OUTLET_COMMAND_BASE = "1.3.6.1.4.1.850.1.1.3.2.3.3.1.1.6.1"  # write target
 OUTLET_STATE_ON = 2
 OUTLET_STATE_OFF = 1
