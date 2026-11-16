@@ -43,11 +43,10 @@ class PduSnmpError(HomeAssistantError):
 
     Must subclass HomeAssistantError, not bare Exception -- HA's script
     engine's `continue_on_error: true` step option only suppresses
-    HomeAssistantError subclasses (confirmed 2026-09-19 against
-    homeassistant/helpers/script.py's _handle_exception: any other
-    exception type is re-raised regardless of continue_on_error). This was
-    the real reason Away Mode/Return Mode kept aborting on a single failed
-    outlet even after continue_on_error was added to every step.
+    HomeAssistantError subclasses (see homeassistant/helpers/script.py's
+    _handle_exception: any other exception type is re-raised regardless of
+    continue_on_error). Otherwise one failed outlet aborts a whole script
+    even with continue_on_error on every step.
     """
 
 
@@ -58,7 +57,7 @@ class PduSnmpClient:
     lifetime instead of creating a fresh one per call. Originally each call
     created its own engine (a fresh SNMPv3 engine-discovery/time-sync
     handshake every time, plus never-closed sockets/dispatchers -- a real
-    resource leak). Live testing against PDU-MEC also showed a coordinator
+    resource leak). Live testing against a real PDU also showed a coordinator
     cycle calling get_cmd immediately followed by two back-to-back walk_cmd
     calls, each with a brand-new engine, sometimes got confused/partial
     results from the device's embedded SNMP agent (outlets 1-8 silently
@@ -128,8 +127,8 @@ class PduSnmpClient:
     async def async_set_outlet(self, outlet_num: int, turn_on: bool) -> None:
         target = await self._get_target()
         value = OUTLET_STATE_ON if turn_on else OUTLET_STATE_OFF
-        # Real root cause found 2026-09-19 (see const.py's OID_OUTLET_COMMAND_BASE
-        # docstring): writes must target the separate "command" column (6), not
+        # See const.py's OID_OUTLET_COMMAND_BASE docstring: writes must
+        # target the separate "command" column (6), not
         # the read-only "status" column (4) that OID_OUTLET_STATE_BASE points at
         # and that this method originally (wrongly) wrote to.
         oid = f"{OID_OUTLET_COMMAND_BASE}.{outlet_num}"
@@ -151,7 +150,7 @@ class PduSnmpClient:
         lexicographicMode=False is required here -- pysnmp's walk_cmd
         defaults to True ("walk the agent's MIB till the end"), which does
         NOT stop at the end of base_oid's subtree. Without this, a live
-        test against PDU-MEC walked straight past the last real outlet
+        test against a real PDU walked straight past the last real outlet
         entry into unrelated parts of the device's MIB tree (landing on
         what looked like a raw SNMP engine ID), and this method's naive
         per-row collection loop happily stored those bogus rows as if they

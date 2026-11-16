@@ -2,13 +2,12 @@
 """Switch platform for the Tripp Lite PDU integration -- one entity per outlet.
 
 Outlet count and names are discovered live from the device (not hardcoded),
-since REC/Living/Master may not match MEC's 16 outlets exactly.
+since PDU models differ in outlet count.
 
 Displayed name is "Load N: <assigned name>" when the outlet has a real
 assigned name (anything other than the device's own generic "Load N"
-placeholder), or just "Load N" when it doesn't -- Chris wants the outlet
-number visible everywhere he's given it a real name (UDM, USW, etc.),
-without changing entity_id (which stays on the plain "Load N"-derived slug
+placeholder), or just "Load N" when it doesn't, so the outlet number stays
+visible next to a real name, without changing entity_id (which stays on the plain "Load N"-derived slug
 it already has -- automations/scripts reference entity_id, not this
 display name, so this is purely cosmetic and doesn't touch those).
 """

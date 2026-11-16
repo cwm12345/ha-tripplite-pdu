@@ -1,10 +1,9 @@
 # Written by Claude, guided by Chris.
 """Config flow for the Tripp Lite PDU integration.
 
-Deliberately validates against the live device before creating the entry
-(one bad-credentials incident this project already had this session was
-enough) -- if the SNMP read fails, the form re-shows with an error instead
-of silently creating a broken config entry.
+Validates against the live device before creating the entry: if the SNMP
+read fails (wrong credentials, wrong host), the form re-shows with an error
+instead of silently creating a broken config entry.
 """
 
 from __future__ import annotations

@@ -5,9 +5,8 @@ Creates one HA device per config entry (one entry per physical PDU), owned
 by that entry as required by HA's device-registry model -- this is the
 architecturally-correct replacement for the raw `sensor: platform: snmp` /
 `switch: platform: snmp` YAML entities, not an external re-parenting of
-those existing entities. See Home Automation/roadmap.md goal 3a for why
-that distinction matters (Device Tools and hand-rolled device_registry
-reassignment were both ruled out for the same reason).
+those existing entities (HA only lets a config entry own its own devices,
+so re-parenting YAML entities onto a device isn't an option).
 """
 
 from __future__ import annotations
