@@ -7,6 +7,7 @@ guessed. See Home Automation/roadmap.md, goal 3a, for the full diagnostic
 history (including the 3-of-4-units metering-zero bug this integration
 does NOT attempt to work around -- it reports what the device reports).
 """
+
 from __future__ import annotations
 
 DOMAIN = "tripplite_pdu"

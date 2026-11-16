@@ -1,5 +1,6 @@
 # Written by Claude, guided by Chris.
 """Sensor platform for the Tripp Lite PDU integration -- whole-unit metering."""
+
 from __future__ import annotations
 
 from homeassistant.components.sensor import (

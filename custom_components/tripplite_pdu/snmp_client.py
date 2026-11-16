@@ -7,9 +7,9 @@ general-purpose SNMP library. Mirrors the exact pysnmp v3arch.asyncio
 calling pattern already proven working this project in
 Home Automation/snmp_probe.py.
 """
+
 from __future__ import annotations
 
-from homeassistant.exceptions import HomeAssistantError
 from pysnmp.hlapi.v3arch.asyncio import (
     ContextData,
     Integer,
@@ -24,6 +24,8 @@ from pysnmp.hlapi.v3arch.asyncio import (
     usmNoPrivProtocol,
     walk_cmd,
 )
+
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
     OID_OUTLET_COMMAND_BASE,
@@ -91,7 +93,9 @@ class PduSnmpClient:
             # message. Wrap it so every real-world connection failure --
             # bad hostname, unreachable host, SNMP error alike -- reports
             # the same way.
-            raise PduSnmpError(f"{self._host}: failed to resolve/connect: {err}") from err
+            raise PduSnmpError(
+                f"{self._host}: failed to resolve/connect: {err}"
+            ) from err
         return self._target
 
     async def async_get_metering(self) -> tuple[float, int]:

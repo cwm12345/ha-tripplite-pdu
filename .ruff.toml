@@ -1,0 +1,15 @@
+# Written by Claude, guided by Chris.
+# Lighter than the Modbus integrations' ruleset: these were written before that
+# pattern and keep their own structure.
+
+target-version = "py313"
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]
+
+[lint.isort]
+force-sort-within-sections = true
+known-first-party = ["homeassistant"]
+combine-as-imports = true
+split-on-trailing-comma = false
