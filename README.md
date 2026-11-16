@@ -68,9 +68,14 @@ pretend otherwise.
 
 ## Installation
 
-**Via HACS (custom repository):** HACS → Integrations → ⋮ → Custom
-repositories → add this repo's URL, category "Integration" → install
-"Tripp Lite PDU" → restart HA.
+**With HACS:**
+
+1. In Home Assistant, open **HACS**, then the **⋮** menu (top right) →
+   **Custom repositories**.
+2. Repository: `https://github.com/cwm12345/ha-tripplite-pdu`, type:
+   **Integration**. Click **Add**.
+3. Search HACS for **Tripp Lite PDU**, open it and click **Download**.
+4. Restart Home Assistant.
 
 **Manual:** copy `custom_components/tripplite_pdu/` into your HA config's
 `custom_components/` directory → restart HA.
