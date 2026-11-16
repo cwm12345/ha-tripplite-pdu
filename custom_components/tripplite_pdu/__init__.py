@@ -9,6 +9,7 @@ those existing entities. See Home Automation/roadmap.md goal 3a for why
 that distinction matters (Device Tools and hand-rolled device_registry
 reassignment were both ruled out for the same reason).
 """
+
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry

@@ -12,6 +12,7 @@ without changing entity_id (which stays on the plain "Load N"-derived slug
 it already has -- automations/scripts reference entity_id, not this
 display name, so this is purely cosmetic and doesn't touch those).
 """
+
 from __future__ import annotations
 
 from typing import Any

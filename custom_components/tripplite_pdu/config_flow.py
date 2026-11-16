@@ -6,6 +6,7 @@ Deliberately validates against the live device before creating the entry
 enough) -- if the SNMP read fails, the form re-shows with an error instead
 of silently creating a broken config entry.
 """
+
 from __future__ import annotations
 
 import logging
@@ -52,9 +53,7 @@ class TrippLitePduConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 current, power = await client.async_get_metering()
             except PduSnmpError:
-                _LOGGER.exception(
-                    "Failed to validate PDU at %s", user_input[CONF_HOST]
-                )
+                _LOGGER.exception("Failed to validate PDU at %s", user_input[CONF_HOST])
                 errors["base"] = "cannot_connect"
             else:
                 _LOGGER.debug(
